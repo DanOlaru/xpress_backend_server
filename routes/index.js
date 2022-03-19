@@ -14,7 +14,9 @@ connection.connect();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  console.log("BARE endpoint accessed ");
+
+  res.render('index', { title: 'Kingdom Come' });
 });
 
 router.get('/hello', function(req, res, next) {
@@ -30,7 +32,7 @@ router.post('/saveUser', function(req, res, next) {
 
   let bod = req.body;
 
-  console.log("bodie " + JSON.stringify(bod));
+  console.log("body " + JSON.stringify(bod));
   console.log(bod);
 
   let payload = JSON.parse(JSON.stringify(bod));
