@@ -25,15 +25,46 @@ router.get('/hello', function(req, res, next) {
 
 });
 
+router.get('/usersById', function(req, res, next) {
+  console.log("REQUEST " + JSON.stringify(req.body));
+  // res.send(req.body);
+  // console.log("USER IDS: " + JSON.stringify(req.body));
+
+  let payload = req.body.userIds;
+  console.log("PAYLOAD: " + JSON.stringify(payload));
+
+
+  let userIds = payload.split(',');
+  userIds = userIds.map(el => {return el.trim()});
+
+
+  let q = 'SELECT * FROM `entry` WHERE `id` IN (' + payload + ');';
+  console.log("QUERY: " + JSON.stringify(q));
+
+  connection.query(q, (err, rows, fields) => {
+    if (err) throw err;
+    //console.log('The solution is: ', JSON.stringify(rows));
+    res.send('SELECT USERS' + JSON.stringify(rows) + " IN ID LIST.");
+  });
+
+});
+
+router.get('/allUsers', function(req, res, next) {
+  console.log("getting all users");
+
+  let q = 'SELECT * FROM `entry` WHERE 1;';
+
+  connection.query(q, (err, rows, fields) => {
+    if (err) throw err;
+    //console.log('The solution is: ', JSON.stringify(rows));
+    res.send('SELECT EXECUTEERD ' + JSON.stringify(rows) + " INTO DB.");
+  });
+
+});
+
 router.post('/saveUser', function(req, res, next) {
-  // res.render('index', { title: 'Hello World X' });
-
-  console.log("SAVE USER endpoint accessed ");
-
+  console.log("SAVE USER endpoint  ");
   let bod = req.body;
-
-  console.log("body " + JSON.stringify(bod));
-  console.log(bod);
 
   let payload = JSON.parse(JSON.stringify(bod));
 
@@ -47,15 +78,18 @@ router.post('/saveUser', function(req, res, next) {
 
   console.log('The QUERY HOT RELOAD: ', q);
 
+  try {
 
-  connection.query(q, (err, rows, fields) => {
-    if (err) throw err;
-    //console.log('The solution is: ', JSON.stringify(rows));
-
-    res.send('INSERTED ' + JSON.stringify(payload) + " INTO DB.");
-
-  });
-
+    connection.query(q, (err, rows, fields) => {
+      if (err) throw err;
+      res.send('INSERTED ' + JSON.stringify(payload) + " INTO DB.");
+    });
+  } catch (err) {
+    console.log("ERROR");
+    console.log(err);
+  } finally {
+    console.log("FINALLY");
+  }
 });
 
 module.exports = router;
